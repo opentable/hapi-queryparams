@@ -1,0 +1,42 @@
+{
+  "name": "hapi-queryparams",
+  "version": "0.0.9",
+  "description": "Hapi.js plugin for converting query params",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "expect.js": "^0.3.1",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-eslint": "^17.1.0",
+    "joi": "^6.6.1",
+    "pre-commit": "^1.1.1",
+    "rewire": "^2.3.4",
+    "time-grunt": "^1.2.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  },
+  "scripts": {
+    "test": "grunt && node_modules/mocha/bin/mocha --reporter spec --timeout 5s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doron2402/hapi-queryparams.git"
+  },
+  "keywords": [
+    "hapi.js",
+    "hapijs",
+    "plugin",
+    "queryparams",
+    "toLowerCase"
+  ],
+  "author": "Doron Segal <doron2402@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/doron2402/hapi-queryparams/issues"
+  },
+  "homepage": "https://github.com/doron2402/hapi-queryparams#readme"
+}
