@@ -1,6 +1,8 @@
 Hapi.js Query Params (Plugin)
 =============================
+
 [![Build Status](https://travis-ci.org/doron2402/hapi-queryparams.svg)](https://travis-ci.org/doron2402/hapi-queryparams)
+
 Hapi.js Plugin for convert query params to
   - camel cases
   - lower case
@@ -20,6 +22,7 @@ How?
 server.register([
   register: require('hapi-queryparams'),
   options: {
+  //ONLY ONE OPTION SHOULD BE SET TO TRUE
     camel_case: true, // user_name => userName , UserName => userName
     all_caps: true,   // username => USERNAME
     lower_case: true, // UserName => username
