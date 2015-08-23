@@ -8,17 +8,17 @@ var plugin = rewire('../src/plugin.js');
 describe('Plugin Query Params', function() {
   
   /*
-   * 
+   *
    * lower_case: true
-   * 
-   */  
+   *
+   */
   describe('When only lower_case:true', function(){
-    var pluginOptions = { lower_case: true };  
+    var pluginOptions = { lower_case: true };
     var req;
     var query = {
-              firstName: 'Doron',
-              Covers: 2,
-              DateTime: new Date()
+      firstName: 'Doron',
+      Covers: 2,
+      DateTime: new Date()
     };
     before(function(done){
       plugin.register({
@@ -59,19 +59,19 @@ describe('Plugin Query Params', function() {
       expect(req.datetime).to.be.eql(req.DateTime);
     });
   });
-  
+
 
   /*
-   * 
-   * camel_case: true 
+   *
+   * camel_case: true
    */
   describe('When only camel_case:true', function(){
     var pluginOptions = { camel_case: true };
     var req;
     var query = {
-        FirstName: 'Doron',
-        Last_Name: 'Doron',
-        user_name: 'doron2402'
+      FirstName: 'Doron',
+      Last_Name: 'Doron',
+      user_name: 'doron2402'
     };
     before(function(done){
       plugin.register({
@@ -112,18 +112,18 @@ describe('Plugin Query Params', function() {
       expect(req.user_name).to.be.eql(req.userName);
     });
   });
-  
+
   /*
-   * 
-   * all_caps: true 
+   *
+   * all_caps: true
    */
   describe('When only all_caps:true', function(){
     var pluginOptions = { all_caps: true };
     var req;
     var query = {
-        FirstName: 'Doron',
-        Last_Name: 'Doron',
-        user_name: 'doron2402'
+      FirstName: 'Doron',
+      Last_Name: 'Doron',
+      user_name: 'doron2402'
     };
     before(function(done){
       plugin.register({
@@ -164,18 +164,18 @@ describe('Plugin Query Params', function() {
       expect(req.user_name).to.be.eql(req.USER_NAME);
     });
   });
-  
+
   /*
-   * 
-   * first_cap: true 
+   *
+   * first_cap: true
    */
   describe('When only first_cap:true', function(){
     var pluginOptions = { first_cap: true };
     var req;
     var query = {
-        firstName: 'Doron',
-        last_Name: 'Doron',
-        user_name: 'doron2402'
+      firstName: 'Doron',
+      last_Name: 'Doron',
+      user_name: 'doron2402'
     };
     before(function(done){
       plugin.register({
@@ -214,65 +214,6 @@ describe('Plugin Query Params', function() {
       expect(req.firstName).to.be.eql(req.FirstName);
       expect(req.last_Name).to.be.eql(req.Last_Name);
       expect(req.user_name).to.be.eql(req.User_name);
-    });
-  });
-  
-  /*
-   * lower_case: true
-   * camel_case: true
-   * all_caps: true
-   * first_cap: true 
-   */
-  describe('When all set to true', function(){
-    var pluginOptions = { 
-        lower_case: true, 
-        camel_case: true,
-        all_caps: true,
-        first_cap: true
-    };
-    var req;
-    var query = {
-        firstName: 'Doron',
-        Last_Name: 'Doron',
-        user_name: 'doron2402'
-    };
-    before(function(done){
-      plugin.register({
-        ext: function(_, handler) {
-          handler({
-            info: {
-              received: new Date()
-            },
-            method: 'get',
-            response: {
-              statusCode: 200
-            },
-            query: query,
-            url: { pathname: '/test/endpoint' },
-            route: {
-              settings: {
-                plugins: {
-                  'hapi-queryparams': {
-                    endpoint: 'test/endpoint',
-                    version: 'test-version'
-                  }
-                }
-              }
-            }
-          }, {
-            continue: function(res) {
-              req = res;
-              done();
-            }
-          });
-        }
-      }, pluginOptions, function() {});
-    });
-
-    it('should return only lower_case', function(){
-      expect(req.firstName).to.be.eql(req.firstname);
-      expect(req.Last_Name).to.be.eql(req.last_name);
-      expect(req.user_name).to.be.eql(req.user_name);
     });
   });
 });

@@ -2,18 +2,39 @@
 var Joi = require('joi');
 
 exports.register = function(plugin, options, next){
-  var schemaOptions = Joi.object().options({ abortEarly: false }).keys({
-    lower_case: Joi.boolean().optional(),
-    camel_case: Joi.boolean().optional(),
-    all_caps: Joi.boolean().optional(),
-    first_cap: Joi.boolean().optional()
-  });
+  var schemaOptions =  Joi.alternatives().try(
+    Joi.object().keys({
+      lower_case: Joi.boolean().required(),
+      camel_case: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) }),
+      all_caps: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) }),
+      first_cap: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) })
+    }),
+    Joi.object().keys({
+      lower_case: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) }),
+      camel_case: Joi.boolean().required(),
+      all_caps: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) }),
+      first_cap: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) })
+    }),
+    Joi.object().keys({
+      lower_case: Joi.boolean().when('all_caps', { is: true, then: Joi.invalid(true) }),
+      camel_case: Joi.boolean().when('all_caps', { is: true, then: Joi.invalid(true) }),
+      all_caps: Joi.boolean().required(),
+      first_cap: Joi.boolean().when('all_caps', { is: true, then: Joi.invalid(true) }),
+    }),
+    Joi.object().keys({
+      lower_case: Joi.boolean().when('first_cap', { is: true, then: Joi.invalid(true) }),
+      camel_case: Joi.boolean().when('first_cap', { is: true, then: Joi.invalid(true) }),
+      all_caps: Joi.boolean().when('first_cap', { is: true, then: Joi.invalid(true) }),
+      first_cap: Joi.boolean().required()
+    })
+  );
+
   var validate = Joi.validate(options, schemaOptions);
-  if (!validate) {
+  if (validate.error) {
     return next(validate.error);
   }
-  
-  
+
+
   plugin.ext('onRequest', function(request, reply) {
     if (!request.query || Object.keys(request.query).length === 0) {
       return reply.continue();
@@ -26,7 +47,7 @@ exports.register = function(plugin, options, next){
         tmpAttr = attr;
         str = attr.toString().toLowerCase();
       }
-      else if (options.camel_case) { 
+      else if (options.camel_case) {
         // convert FirstName => firstName
         // convert First_Name => firstName
         // convert first_name => firstName
