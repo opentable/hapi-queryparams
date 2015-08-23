@@ -70,7 +70,7 @@ exports.register = function(plugin, options, next){
       request.query[str] = request.query[tmpAttr];
     });
 
-    if (process.env.NODE_ENV === 'test') {
+    if (process.env && process.env.NODE_ENV === 'test') {
       return reply.continue(request.query);
     }
     reply.continue();
