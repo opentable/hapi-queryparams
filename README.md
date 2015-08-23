@@ -1,7 +1,6 @@
 Hapi.js Query Params (Plugin)
 =============================
-[![Build Status](https://secure.travis-ci.org/doron2402/hapi-queryparams.png?branch=master)](http://travis-ci.org/doron2402/hapi-queryparams)
-
+[![Build Status](https://travis-ci.org/doron2402/hapi-queryparams.svg)](https://travis-ci.org/doron2402/hapi-queryparams)
 Hapi.js Plugin for convert query params to
   - camel cases
   - lower case
