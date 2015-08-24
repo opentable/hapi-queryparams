@@ -7,25 +7,29 @@ exports.register = function(plugin, options, next){
       lower_case: Joi.boolean().required(),
       camel_case: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) }),
       all_caps: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) }),
-      first_cap: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) })
+      first_cap: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) }),
+      delete_original: Joi.boolean().optional()
     }),
     Joi.object().keys({
       lower_case: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) }),
       camel_case: Joi.boolean().required(),
       all_caps: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) }),
-      first_cap: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) })
+      first_cap: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) }),
+      delete_original: Joi.boolean().optional()
     }),
     Joi.object().keys({
       lower_case: Joi.boolean().when('all_caps', { is: true, then: Joi.invalid(true) }),
       camel_case: Joi.boolean().when('all_caps', { is: true, then: Joi.invalid(true) }),
       all_caps: Joi.boolean().required(),
       first_cap: Joi.boolean().when('all_caps', { is: true, then: Joi.invalid(true) }),
+      delete_original: Joi.boolean().optional()
     }),
     Joi.object().keys({
       lower_case: Joi.boolean().when('first_cap', { is: true, then: Joi.invalid(true) }),
       camel_case: Joi.boolean().when('first_cap', { is: true, then: Joi.invalid(true) }),
       all_caps: Joi.boolean().when('first_cap', { is: true, then: Joi.invalid(true) }),
-      first_cap: Joi.boolean().required()
+      first_cap: Joi.boolean().required(),
+      delete_original: Joi.boolean().optional()
     })
   );
 
@@ -68,6 +72,10 @@ exports.register = function(plugin, options, next){
       }
 
       request.query[str] = request.query[tmpAttr];
+
+      if (options.delete_original) {
+        delete request.query[tmpAttr];
+      }
     });
 
     if (process.env && process.env.NODE_ENV === 'test') {
