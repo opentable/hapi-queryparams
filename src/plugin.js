@@ -73,7 +73,7 @@ exports.register = function(plugin, options, next){
 
       request.query[str] = request.query[tmpAttr];
 
-      if (options.delete_original) {
+      if (options.delete_original && tmpAttr.toString() !== str) {
         delete request.query[tmpAttr];
       }
     });
