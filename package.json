@@ -1,5 +1,5 @@
 {
-  "name": "hapi-queryparams",
+  "name": "ot-hapi-queryparams",
   "version": "0.1.3",
   "description": "Hapi.js plugin for converting query params",
   "main": "index.js",
@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/doron2402/hapi-queryparams.git"
+    "url": "git+https://github.com/opentable/ot-hapi-queryparams.git"
   },
   "keywords": [
     "hapi.js",
@@ -33,10 +33,9 @@
     "queryparams",
     "toLowerCase"
   ],
-  "author": "Doron Segal <doron2402@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/doron2402/hapi-queryparams/issues"
+    "url": "https://github.com/opentable/ot-hapi-queryparams/issues"
   },
-  "homepage": "https://github.com/doron2402/hapi-queryparams#readme"
+  "homepage": "https://github.com/opentable/ot-hapi-queryparams#readme"
 }

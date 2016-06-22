@@ -1,7 +1,7 @@
 Hapi.js Query Params (Plugin)
 =============================
 
-[![Build Status](https://travis-ci.org/doron2402/hapi-queryparams.svg)](https://travis-ci.org/doron2402/hapi-queryparams)
+[![Build Status](https://travis-ci.org/opentable/ot-hapi-queryparams.svg)](https://travis-ci.org/opentable/ot-hapi-queryparams)
 
 Hapi.js Plugin for convert query params to
   - camel cases
@@ -20,7 +20,7 @@ How?
 
 // server
 server.register([
-  register: require('hapi-queryparams'),
+  register: require('ot-hapi-queryparams'),
   options: {
   delete_original: true/false // remove the origin query param attribute
   //ONLY ONE OPTION SHOULD BE SET TO TRUE
@@ -35,14 +35,14 @@ server.register([
 ```javascript
 // correct way to pass options
 server.register([
-  register: require('hapi-queryparams'),
+  register: require('ot-hapi-queryparams'),
   options: {
   delete_original: true,
   camel_case: true
   }
 ])
 
-// from user_name=doron2402 => userName=doron2402 // user_name will be deleted
+// from user_name=opentable => userName=opentable // user_name will be deleted
 ```
 
 
@@ -52,11 +52,11 @@ server.register([
 Github
 -------------
 
-Check the [GitHub issues](https://github.com/doron2402/hai-queryparams/issues).
+Check the [GitHub issues](https://github.com/opentable/ot-hapi-queryparams/issues).
 
 
 LICENSE
 -------
 
-[LICENSE](https://github.com/doron2402/hapi-queryparams/blob/master/LICENSE).
+[LICENSE](https://github.com/opentable/ot-hapi-queryparams/blob/master/LICENSE).
 
