@@ -1,6 +1,6 @@
 {
   "name": "ot-hapi-queryparams",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Hapi.js plugin for converting query params",
   "main": "index.js",
   "directories": {
