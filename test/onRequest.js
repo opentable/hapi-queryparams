@@ -1,342 +1,144 @@
 'use strict';
 process.env.NODE_ENV = 'test';
-var expect = require('expect.js');
-var rewire = require('rewire');
-var plugin = rewire('../src/plugin.js');
+const expect = require('expect.js');
+const rewire = require('rewire');
+const plugin = rewire('../src/plugin.js');
 
+const request = {
+  info: {
+    received: new Date()
+  },
+  method: 'get',
+  response: {
+    statusCode: 200
+  },
+  query: {
+    firstName: 'Doron',
+    last_Name: 'Doron',
+    DateTime: '2012-04-05'
+  },
+  url: { pathname: '/test/endpoint' },
+  route: {
+    settings: {
+      plugins: {
+        'hapi-queryparams': {
+          endpoint: 'test/endpoint',
+          version: 'test-version'
+        }
+      }
+    }
+  }
+};
 
 describe('Plugin Query Params', function() {
+  describe('options: lower_case:true', function(){
+    const pluginOptions = { lower_case: true };
 
-  /*
-   *
-   * lower_case: true
-   *
-   */
-  describe('When only lower_case:true', function(){
-    var pluginOptions = { lower_case: true };
-    var req;
-    var query = {
-      firstName: 'Doron',
-      Covers: 2,
-      DateTime: new Date()
-    };
     before(function(done){
       plugin.register({
-        ext: function(_, handler) {
-          handler({
-            info: {
-              received: new Date()
-            },
-            method: 'get',
-            response: {
-              statusCode: 200
-            },
-            query: query,
-            url: { pathname: '/test/endpoint' },
-            route: {
-              settings: {
-                plugins: {
-                  'hapi-queryparams': {
-                    endpoint: 'test/endpoint',
-                    version: 'test-version'
-                  }
-                }
-              }
-            }
-          }, {
-            continue: function(res) {
-              req = res;
-              done();
-            }
-          });
-        }
-      }, pluginOptions, function() {});
+          ext(_, handler) {
+            handler(request, { continue() { done(); }});
+          }
+        },
+        pluginOptions,
+        function() {}
+      );
     });
 
     it('should have lower case query params', function(){
-      expect(req.firstname).to.be.eql(req.firstName);
-      expect(req.covers).to.be.eql(req.Covers);
-      expect(req.datetime).to.be.eql(req.DateTime);
+      expect(request.query.firstname).to.be.eql(request.query.firstName);
+      expect(request.query.last_name).to.be.eql(request.query.last_Name);
+      expect(request.query.datetime).to.be.eql(request.query.DateTime);
     });
   });
 
+  describe('options: camel_case:true', function(){
+    const pluginOptions = { camel_case: true };
 
-  /*
-   *
-   * camel_case: true
-   */
-  describe('When only camel_case:true', function(){
-    var pluginOptions = { camel_case: true };
-    var req;
-    var query = {
-      FirstName: 'Doron',
-      Last_Name: 'Doron',
-      user_name: 'doron2402'
-    };
     before(function(done){
       plugin.register({
-        ext: function(_, handler) {
-          handler({
-            info: {
-              received: new Date()
-            },
-            method: 'get',
-            response: {
-              statusCode: 200
-            },
-            query: query,
-            url: { pathname: '/test/endpoint' },
-            route: {
-              settings: {
-                plugins: {
-                  'hapi-queryparams': {
-                    endpoint: 'test/endpoint',
-                    version: 'test-version'
-                  }
-                }
-              }
-            }
-          }, {
-            continue: function(res) {
-              req = res;
-              done();
-            }
-          });
-        }
-      }, pluginOptions, function() {});
+          ext(_, handler) {
+            handler(request, { continue() { done(); }});
+          }
+        },
+        pluginOptions,
+        function() {}
+      );
     });
 
     it('should have lower case query params', function(){
-      expect(req.FirstName).to.be.eql(req.firstName);
-      expect(req.Last_Name).to.be.eql(req.lastName);
-      expect(req.user_name).to.be.eql(req.userName);
+      expect(request.query.firstName).to.be.eql(request.query.firstName);
+      expect(request.query.last_Name).to.be.eql(request.query.lastName);
+      expect(request.query.DateTime).to.be.eql(request.query.dateTime);
     });
   });
 
-  /*
-   *
-   * all_caps: true
-   */
-  describe('When only all_caps:true', function(){
-    var pluginOptions = { all_caps: true };
-    var req;
-    var query = {
-      FirstName: 'Doron',
-      Last_Name: 'Doron',
-      user_name: 'doron2402'
-    };
+  describe('options: all_caps:true', function(){
+    const pluginOptions = { all_caps: true };
+
     before(function(done){
       plugin.register({
-        ext: function(_, handler) {
-          handler({
-            info: {
-              received: new Date()
-            },
-            method: 'get',
-            response: {
-              statusCode: 200
-            },
-            query: query,
-            url: { pathname: '/test/endpoint' },
-            route: {
-              settings: {
-                plugins: {
-                  'hapi-queryparams': {
-                    endpoint: 'test/endpoint',
-                    version: 'test-version'
-                  }
-                }
-              }
-            }
-          }, {
-            continue: function(res) {
-              req = res;
-              done();
-            }
-          });
-        }
-      }, pluginOptions, function() {});
+          ext(_, handler) {
+            handler(request, { continue() { done(); }});
+          }
+        },
+        pluginOptions,
+        function() {}
+      );
     });
 
     it('should return ALL CAPITAL LETTERS', function(){
-      expect(req.FirstName).to.be.eql(req.FIRSTNAME);
-      expect(req.Last_Name).to.be.eql(req.LAST_NAME);
-      expect(req.user_name).to.be.eql(req.USER_NAME);
+      expect(request.query.firstName).to.eql(request.query.FIRSTNAME);
+      expect(request.query.last_Name).to.eql(request.query.LAST_NAME);
+      expect(request.query.DateTime).to.eql(request.query.DATETIME);
     });
   });
 
-  /*
-   *
-   * first_cap: true
-   */
-  describe('When only first_cap:true', function(){
-    var pluginOptions = { first_cap: true };
-    var req;
-    var query = {
-      firstName: 'Doron',
-      last_Name: 'Doron',
-      user_name: 'doron2402'
-    };
+  describe('options: first_cap:true', function(){
+    const pluginOptions = { first_cap: true };
+
     before(function(done){
       plugin.register({
-        ext: function(_, handler) {
-          handler({
-            info: {
-              received: new Date()
-            },
-            method: 'get',
-            response: {
-              statusCode: 200
-            },
-            query: query,
-            url: { pathname: '/test/endpoint' },
-            route: {
-              settings: {
-                plugins: {
-                  'hapi-queryparams': {
-                    endpoint: 'test/endpoint',
-                    version: 'test-version'
-                  }
-                }
-              }
-            }
-          }, {
-            continue: function(res) {
-              req = res;
-              done();
-            }
-          });
-        }
-      }, pluginOptions, function() {});
+          ext(_, handler) {
+            handler(request, { continue() { done(); }});
+          }
+        },
+        pluginOptions,
+        function() {}
+      );
     });
 
     it('should return first letter CAPITAL LETTER', function(){
-      expect(req.firstName).to.be.eql(req.FirstName);
-      expect(req.last_Name).to.be.eql(req.Last_Name);
-      expect(req.user_name).to.be.eql(req.User_name);
+      expect(request.query.firstName).to.be.eql(request.query.FirstName);
+      expect(request.query.last_Name).to.be.eql(request.query.Last_Name);
+      expect(request.query.DateTime).to.be.eql(request.query.DateTime);
     });
   });
-  
-  
-  /*
-   *
-   * lower_case: true
-   * delete_original: true
-   */
-  describe('When only lower_case:true AND delete_original: true ', function(){
-    var pluginOptions = { lower_case: true, delete_original: true };
-    var req;
-    var date = new Date();
-    var query = {
-      firstName: 'Doron',
-      Covers: 2,
-      DateTime: date
-    };
+
+  describe('options: lower_case:true, delete_original:true', function(){
+    const pluginOptions = { lower_case: true, delete_original: true };
+
     before(function(done){
       plugin.register({
-        ext: function(_, handler) {
-          handler({
-            info: {
-              received: date
-            },
-            method: 'get',
-            response: {
-              statusCode: 200
-            },
-            query: query,
-            url: { pathname: '/test/endpoint' },
-            route: {
-              settings: {
-                plugins: {
-                  'hapi-queryparams': {
-                    endpoint: 'test/endpoint',
-                    version: 'test-version'
-                  }
-                }
-              }
-            }
-          }, {
-            continue: function(res) {
-              req = res;
-              done();
-            }
-          });
-        }
-      }, pluginOptions, function() {});
+          ext(_, handler) {
+            handler(request, { continue() { done(); }});
+          }
+        },
+        pluginOptions,
+        function() {}
+      );
     });
 
     it('should have lower case query params', function(){
-      expect(req.firstname).to.be.eql('Doron');
-      expect(req.covers).to.be.eql(2);
-      expect(req.datetime).to.be.eql(date);
-    });
-    
-    it('Should remove the original query params', function(){
-      expect(req.firstName).to.be.undefined;
-      expect(req.Covers).to.be.undefined;
-      expect(req.DateTime).to.be.undefined;
-    });
-  });
-  
-  /*
-   *
-   * lower_case: true
-   * delete_original: true
-   */
-  describe('When only lower_case:true AND delete_original: true And query params are the same', function(){
-    var pluginOptions = { lower_case: true, delete_original: true };
-    var req;
-    var date = new Date();
-    var query = {
-      firstName: 'Doron',
-      Covers: 2,
-      DateTime: date,
-      test: 'test'
-    };
-    before(function(done){
-      plugin.register({
-        ext: function(_, handler) {
-          handler({
-            info: {
-              received: date
-            },
-            method: 'get',
-            response: {
-              statusCode: 200
-            },
-            query: query,
-            url: { pathname: '/test/endpoint' },
-            route: {
-              settings: {
-                plugins: {
-                  'hapi-queryparams': {
-                    endpoint: 'test/endpoint',
-                    version: 'test-version'
-                  }
-                }
-              }
-            }
-          }, {
-            continue: function(res) {
-              req = res;
-              done();
-            }
-          });
-        }
-      }, pluginOptions, function() {});
+      expect(request.query.firstname).to.eql('Doron');
+      expect(request.query.last_name).to.eql('Doron');
+      expect(request.query.datetime).to.eql('2012-04-05');
     });
 
-    it('should have lower case query params', function(){
-      expect(req.firstname).to.be.eql('Doron');
-      expect(req.covers).to.be.eql(2);
-      expect(req.datetime).to.be.eql(date);
-      expect(req.test).to.be.eql('test');
-    });
-    
     it('Should remove the original query params', function(){
-      expect(req.firstName).to.be.undefined;
-      expect(req.Covers).to.be.undefined;
-      expect(req.DateTime).to.be.undefined;
+      expect(request.query.firstName).to.be.undefined;
+      expect(request.query.last_Name).to.be.undefined;
+      expect(request.query.DateTime).to.be.undefined;
     });
   });
 });
