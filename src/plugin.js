@@ -78,9 +78,6 @@ exports.register = function(plugin, options, next){
       }
     });
 
-    if (process.env && process.env.NODE_ENV === 'test') {
-      return reply.continue(request.query);
-    }
     reply.continue();
 
   });
