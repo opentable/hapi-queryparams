@@ -38,7 +38,6 @@ exports.register = function(plugin, options, next){
     return next(validate.error);
   }
 
-
   plugin.ext('onRequest', function(request, reply) {
     if (!request.query || Object.keys(request.query).length === 0) {
       return reply.continue();
@@ -78,11 +77,7 @@ exports.register = function(plugin, options, next){
       }
     });
 
-    if (process.env && process.env.NODE_ENV === 'test') {
-      return reply.continue(request.query);
-    }
     reply.continue();
-
   });
 
   next();
