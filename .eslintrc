@@ -1,5 +1,6 @@
 
 {
+  "parserOptions": { "ecmaVersion": 6},
   "rules": {
     "brace-style": [1, "stroustrup", { "allowSingleLine": true }],
       "comma-style": [1, "last"],
