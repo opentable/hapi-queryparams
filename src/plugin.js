@@ -1,8 +1,7 @@
-'use strict';
 const Joi = require('joi');
 const _ = require('lodash');
 
-const schemaOptions = 
+const schemaOptions =
   Joi.object().keys({
     lowerCase: Joi.boolean(),
     schemaCase: Joi.object(),
@@ -11,7 +10,7 @@ const schemaOptions =
 
 function generateKeyMapping(schema) {
   const schemaKeysMap = _.mapValues(schema, function(value, key) { return key; });
-  const keyMapping = _.mapKeys(schemaKeysMap, function(value) { return _.toLower(value);});
+  const keyMapping = _.mapKeys(schemaKeysMap, function(value) { return _.toLower(value); });
   return keyMapping;
 }
 
@@ -61,4 +60,3 @@ module.exports = function(server, options) {
 
   return Promise.resolve();
 };
-
