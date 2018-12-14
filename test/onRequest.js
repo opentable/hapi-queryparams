@@ -13,9 +13,10 @@ const request = {
     statusCode: 200
   },
   query: {
-    firstName: 'Doron',
-    last_Name: 'Doron',
-    DateTime: '2012-04-05'
+    First_name: 'Doron',
+    lastName: 'Doron',
+    DateTime: '2012-04-05',
+    whAtever: 'blah'
   },
   url: { pathname: '/test/endpoint' },
   route: {
@@ -31,11 +32,11 @@ const request = {
 };
 
 describe('Plugin Query Params', function() {
-  describe('options: lower_case:true', function(){
-    const pluginOptions = { lower_case: true };
+  describe('options: lowerCase:true', function() {
+    const pluginOptions = { lowerCase: true };
 
     before(function(done){
-      plugin.register({
+      plugin({
           ext(_, handler) {
             handler(request, { continue() { done(); }});
           }
@@ -45,18 +46,18 @@ describe('Plugin Query Params', function() {
       );
     });
 
-    it('should have lower case query params', function(){
-      expect(request.query.firstname).to.be.eql(request.query.firstName);
-      expect(request.query.last_name).to.be.eql(request.query.last_Name);
+    it('should have lower case query params', function() {
+      expect(request.query.first_name).to.be.eql(request.query.First_name);
+      expect(request.query.lastname).to.be.eql(request.query.lastName);
       expect(request.query.datetime).to.be.eql(request.query.DateTime);
     });
   });
 
-  describe('options: camel_case:true', function(){
-    const pluginOptions = { camel_case: true };
+  describe('options: schemaCase: {schema}', function() {
+    const pluginOptions = { schemaCase: {first_Name: null, LastName: null, dateTime: null} };
 
-    before(function(done){
-      plugin.register({
+    before(function(done) {
+      plugin({
           ext(_, handler) {
             handler(request, { continue() { done(); }});
           }
@@ -66,18 +67,19 @@ describe('Plugin Query Params', function() {
       );
     });
 
-    it('should have lower case query params', function(){
-      expect(request.query.firstName).to.be.eql(request.query.firstName);
-      expect(request.query.last_Name).to.be.eql(request.query.lastName);
+    it('should have camel case known query params', function() {
+      expect(request.query.First_name).to.be.eql(request.query.first_Name);
+      expect(request.query.lastName).to.be.eql(request.query.LastName);
       expect(request.query.DateTime).to.be.eql(request.query.dateTime);
+      expect(request.query.whAtever).to.be.eql(request.query.whAtever);
     });
   });
 
-  describe('options: all_caps:true', function(){
-    const pluginOptions = { all_caps: true };
+  describe('options: lowerCase:true, deleteOriginal:true', function() {
+    const pluginOptions = { lowerCase: true, deleteOriginal: true };
 
-    before(function(done){
-      plugin.register({
+    before(function(done) {
+      plugin({
           ext(_, handler) {
             handler(request, { continue() { done(); }});
           }
@@ -87,57 +89,15 @@ describe('Plugin Query Params', function() {
       );
     });
 
-    it('should return ALL CAPITAL LETTERS', function(){
-      expect(request.query.firstName).to.eql(request.query.FIRSTNAME);
-      expect(request.query.last_Name).to.eql(request.query.LAST_NAME);
-      expect(request.query.DateTime).to.eql(request.query.DATETIME);
-    });
-  });
-
-  describe('options: first_cap:true', function(){
-    const pluginOptions = { first_cap: true };
-
-    before(function(done){
-      plugin.register({
-          ext(_, handler) {
-            handler(request, { continue() { done(); }});
-          }
-        },
-        pluginOptions,
-        function() {}
-      );
-    });
-
-    it('should return first letter CAPITAL LETTER', function(){
-      expect(request.query.firstName).to.be.eql(request.query.FirstName);
-      expect(request.query.last_Name).to.be.eql(request.query.Last_Name);
-      expect(request.query.DateTime).to.be.eql(request.query.DateTime);
-    });
-  });
-
-  describe('options: lower_case:true, delete_original:true', function(){
-    const pluginOptions = { lower_case: true, delete_original: true };
-
-    before(function(done){
-      plugin.register({
-          ext(_, handler) {
-            handler(request, { continue() { done(); }});
-          }
-        },
-        pluginOptions,
-        function() {}
-      );
-    });
-
-    it('should have lower case query params', function(){
-      expect(request.query.firstname).to.eql('Doron');
-      expect(request.query.last_name).to.eql('Doron');
+    it('should have lower case query params', function() {
+      expect(request.query.first_name).to.eql('Doron');
+      expect(request.query.lastname).to.eql('Doron');
       expect(request.query.datetime).to.eql('2012-04-05');
     });
 
-    it('Should remove the original query params', function(){
-      expect(request.query.firstName).to.be.undefined;
-      expect(request.query.last_Name).to.be.undefined;
+    it('Should remove the original query params', function() {
+      expect(request.query.First_name).to.be.undefined;
+      expect(request.query.LastName).to.be.undefined;
       expect(request.query.DateTime).to.be.undefined;
     });
   });

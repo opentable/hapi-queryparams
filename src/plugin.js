@@ -1,85 +1,64 @@
 'use strict';
-var Joi = require('joi');
+const Joi = require('joi');
+const _ = require('lodash');
 
-exports.register = function(plugin, options, next){
-  var schemaOptions =  Joi.alternatives().try(
-    Joi.object().keys({
-      lower_case: Joi.boolean().required(),
-      camel_case: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) }),
-      all_caps: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) }),
-      first_cap: Joi.boolean().when('lower_case', { is: true, then: Joi.invalid(true) }),
-      delete_original: Joi.boolean().optional()
-    }),
-    Joi.object().keys({
-      lower_case: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) }),
-      camel_case: Joi.boolean().required(),
-      all_caps: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) }),
-      first_cap: Joi.boolean().when('camel_case', { is: true, then: Joi.invalid(true) }),
-      delete_original: Joi.boolean().optional()
-    }),
-    Joi.object().keys({
-      lower_case: Joi.boolean().when('all_caps', { is: true, then: Joi.invalid(true) }),
-      camel_case: Joi.boolean().when('all_caps', { is: true, then: Joi.invalid(true) }),
-      all_caps: Joi.boolean().required(),
-      first_cap: Joi.boolean().when('all_caps', { is: true, then: Joi.invalid(true) }),
-      delete_original: Joi.boolean().optional()
-    }),
-    Joi.object().keys({
-      lower_case: Joi.boolean().when('first_cap', { is: true, then: Joi.invalid(true) }),
-      camel_case: Joi.boolean().when('first_cap', { is: true, then: Joi.invalid(true) }),
-      all_caps: Joi.boolean().when('first_cap', { is: true, then: Joi.invalid(true) }),
-      first_cap: Joi.boolean().required(),
-      delete_original: Joi.boolean().optional()
-    })
-  );
+const schemaOptions = 
+  Joi.object().keys({
+    lowerCase: Joi.boolean(),
+    schemaCase: Joi.object(),
+    deleteOriginal: Joi.boolean().optional()
+  }).xor('lowerCase', 'schemaCase');
 
-  var validate = Joi.validate(options, schemaOptions);
+function generateKeyMapping(schema) {
+  const schemaKeysMap = _.mapValues(schema, function(value, key) { return key; });
+  const keyMapping = _.mapKeys(schemaKeysMap, function(value) { return _.toLower(value);});
+  return keyMapping;
+}
+
+function endPreHandler(reply) {
+  if (_.isFunction(reply.continue)) {
+    return reply.continue();
+  }
+  return reply.continue;
+}
+
+module.exports = function(server, options) {
+
+  const validate = Joi.validate(options, schemaOptions);
   if (validate.error) {
-    return next(validate.error);
+    return Promise.reject(validate.error);
   }
 
-  plugin.ext('onRequest', function(request, reply) {
+  server.ext('onRequest', function(request, reply) {
     if (!request.query || Object.keys(request.query).length === 0) {
-      return reply.continue();
+      return endPreHandler(reply);
     }
-    Object.keys(request.query).forEach(function(attr){
-      var tmpAttr;
-      var str;
-      if (options.lower_case) {
+    Object.keys(request.query).forEach(function(attr) {
+      let tmpAttr;
+      let str;
+      if (options.lowerCase) {
         //convert FirstName => firstname
         tmpAttr = attr;
         str = attr.toString().toLowerCase();
       }
-      else if (options.camel_case) {
-        // convert FirstName => firstName
-        // convert First_Name => firstName
-        // convert first_name => firstName
+      else if (options.schemaCase) {
+        // convert to schema schemaCase equivelant or retain original casing.
+        const keyMapping = generateKeyMapping(options.schemaCase);
         tmpAttr = attr;
-        str = attr.toString().replace(/(\_[a-z])/gi, function($1){return $1.toUpperCase().replace('_','');});
-        str = str.substr(0,1).toLowerCase() + str.slice(1,str.length);
-      }
-      else if (options.all_caps) {
-        // continue firstName => FIRSTNAME
-        tmpAttr = attr;
-        str = attr.toString().toUpperCase();
-      }
-      else if (options.first_cap) {
-        // convert firstName => FirstName
-        tmpAttr = attr;
-        str = attr.toString();
-        str = str.substr(0,1).toUpperCase() + str.slice(1, str.length);
+        str = attr.toString().toLowerCase();
+        str = _.get(keyMapping, str, attr);
       }
 
       request.query[str] = request.query[tmpAttr];
 
-      if (options.delete_original && tmpAttr.toString() !== str) {
+      if (options.deleteOriginal && tmpAttr.toString() !== str) {
         delete request.query[tmpAttr];
       }
     });
 
-    reply.continue();
+    return endPreHandler(reply);
   });
 
-  next();
+  return Promise.resolve();
 };
 

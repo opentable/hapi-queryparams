@@ -4,10 +4,8 @@ Hapi.js Query Params (Plugin)
 [![Build Status](https://travis-ci.org/opentable/ot-hapi-queryparams.svg)](https://travis-ci.org/opentable/ot-hapi-queryparams)
 
 Hapi.js Plugin for convert query params to
-  - camel cases
+  - schema cases (given a Schema, match casing for given params)
   - lower case
-  - all caps
-  - first charecter CAP
 
 WHY?
 ===
@@ -22,12 +20,10 @@ How?
 server.register([
   register: require('ot-hapi-queryparams'),
   options: {
-  delete_original: true/false // remove the origin query param attribute
-  //ONLY ONE OPTION SHOULD BE SET TO TRUE
-    camel_case: true, // user_name => userName , UserName => userName
-    all_caps: true,   // username => USERNAME
-    lower_case: true, // UserName => username
-    first_cap: true, // userName => UserName
+  deleteOriginal: true/false // remove the origin query param attribute
+  //only one of these should be set at a time.
+    schemaCased: { userName: Joi.string().required() }, // username => userName (given a schema with userName as a key)
+    lowerCase: true/false // UserName => username
   }
 ])
 
@@ -37,8 +33,8 @@ server.register([
 server.register([
   register: require('ot-hapi-queryparams'),
   options: {
-  delete_original: true,
-  camel_case: true
+  deleteOriginal: true,
+  schemaCased: {firstName: null}
   }
 ])
 
@@ -46,7 +42,7 @@ server.register([
 ```
 
 
-** IMPORTANT: options must have only ONE param you can camel case and all caps,
+** IMPORTANT: options must have only ONE param you can schema case or lower case,
 
 
 Github
