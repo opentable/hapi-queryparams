@@ -1,17 +1,12 @@
-'use strict';
 process.env.NODE_ENV = 'test';
 const expect = require('expect.js');
 const rewire = require('rewire');
 const plugin = rewire('../src/plugin.js');
 
 const request = {
-  info: {
-    received: new Date()
-  },
+  info: { received: new Date() },
   method: 'get',
-  response: {
-    statusCode: 200
-  },
+  response: { statusCode: 200 },
   query: {
     First_name: 'Doron',
     lastName: 'Doron',
@@ -102,4 +97,3 @@ describe('Plugin Query Params', function() {
     });
   });
 });
-
